@@ -1,0 +1,22 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+# Основные маршруты приложения подключаются через аннотации в контроллерах
+
+# Маршрут по умолчанию для главной страницы
+index:
+    path: /
+    controller: App\Controller\OrderController::index
+
+# Перенаправление с /order на главную
+order_redirect:
+    path: /ord
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: app_order_index
+        permanent: true
+
+# Все остальные неопределенные маршруты будут перехвачены ErrorController

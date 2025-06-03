@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ status_text }} ({{ status_code }}){% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-template">
+                <h1 class="display-1">{{ status_code }}</h1>
+                <h2 class="display-4 mb-4">{{ status_text }}</h2>
+                
+                {% if status_code == 404 %}
+                    <div class="error-details mb-4">
+                        К сожалению, страница "{{ current_path }}" не существует или была перемещена.
+                    </div>
+                {% else %}
+                    <div class="error-details mb-4">
+                        Произошла ошибка при обработке вашего запроса.
+                    </div>
+                {% endif %}
+
+                <div class="error-actions">
+                    <a href="{{ path('app_order_index') }}" class="btn btn-primary btn-lg me-2">
+                        <i class="fas fa-home me-2"></i>На главную
+                    </a>
+                    {% if is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_order_history') }}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-history me-2"></i>История заказов
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-template {
+    padding: 40px 15px;
+}
+.error-template h1 {
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+.error-details {
+    color: #636b6f;
+    font-size: 1.2rem;
+}
+.error-actions {
+    margin-top: 30px;
+}
+</style>
+{% endblock %} 

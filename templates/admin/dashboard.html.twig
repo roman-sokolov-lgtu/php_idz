@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Панель администратора</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Последние заказы</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Тип доставки</th>
+                                    <th>Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders|slice(0, 5) %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>{{ order.clientName }}</td>
+                                        <td>
+                                            {% if order.deliveryType == 'standard' %}
+                                                Стандарт
+                                            {% else %}
+                                                Экспресс
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.price }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{{ path('admin_orders') }}" class="btn btn-primary">Все заказы</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Пользователи</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Имя пользователя</th>
+                                    <th>Роль</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users|slice(0, 5) %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.role }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{{ path('admin_users') }}" class="btn btn-primary">Все пользователи</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
