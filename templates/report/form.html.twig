@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Создание отчета{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Создание отчета</h2>
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <form action="{{ path('app_report_generate') }}" method="POST">
+            <div class="mb-3">
+                <label for="from_date" class="form-label">Дата начала</label>
+                <input type="date" name="from_date" id="from_date" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="to_date" class="form-label">Дата окончания</label>
+                <input type="date" name="to_date" id="to_date" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Создать отчет</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script>
+        flatpickr("#from_date", {
+            dateFormat: "d.m.Y",
+            locale: "ru",
+            allowInput: true
+        });
+        flatpickr("#to_date", {
+            dateFormat: "d.m.Y",
+            locale: "ru",
+            allowInput: true
+        });
+    </script>
+{% endblock %} 

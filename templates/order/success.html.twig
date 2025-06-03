@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Заказ создан{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="alert alert-success">
+            <h4 class="alert-heading">Успешно!</h4>
+            <p>Ваш заказ был успешно создан.</p>
+            <hr>
+            <p class="mb-0">
+                <a href="{{ path('app_order_index') }}" class="btn btn-primary">Создать еще заказ</a>
+                <a href="{{ path('app_order_history') }}" class="btn btn-secondary">Посмотреть историю заказов</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

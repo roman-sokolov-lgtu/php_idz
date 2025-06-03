@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список заказов{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Список заказов</h2>
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя клиента</th>
+                        <th>Тип доставки</th>
+                        <th>Водитель</th>
+                        <th>Адрес</th>
+                        <th>Телефон</th>
+                        <th>Цена</th>
+                        <th>Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.clientName }}</td>
+                        <td>
+                            {% if order.deliveryType == 'standard' %}
+                                Стандарт
+                            {% else %}
+                                Экспресс
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.driver %}
+                                {{ order.driver }}
+                            {% else %}
+                                <span class="badge bg-warning">Не назначен</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ order.city }}, 
+                            {{ order.street }}, 
+                            д. {{ order.house }}
+                            {% if order.apartment %}
+                                , кв. {{ order.apartment }}
+                            {% endif %}
+                        </td>
+                        <td>{{ order.phone }}</td>
+                        <td>{{ order.price }} р</td>
+                        <td>{{ order.createdAt|date('d.m.Y H:i', 'Europe/Moscow') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">Заказы не найдены</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

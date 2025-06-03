@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новый заказ{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Создание нового заказа</h1>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="card">
+        <div class="card-body">
+            <form id="orderForm" action="{{ path('app_order_create') }}" method="POST" onsubmit="return validateForm()">
+                <div class="mb-3">
+                    <label for="delivery_type" class="form-label">Тип доставки *</label>
+                    <select class="form-select" id="delivery_type" name="delivery_type" required>
+                        <option value="">Выберите тип доставки</option>
+                        <option value="standard">Стандартная</option>
+                        <option value="express">Экспресс</option>
+                    </select>
+                    <div class="invalid-feedback">Пожалуйста, выберите тип доставки</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="client_name" class="form-label">Имя клиента *</label>
+                    <input type="text" class="form-control" id="client_name" name="client_name" 
+                           required minlength="2" maxlength="50">
+                    <div class="invalid-feedback">Имя может содержать только буквы (русские или латинские), пробелы и дефис (2-50 символов)</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="city" class="form-label">Город *</label>
+                    <input type="text" class="form-control" id="city" name="city" 
+                           required minlength="2" maxlength="50">
+                    <div class="invalid-feedback">Название города может содержать только буквы (русские или латинские), пробелы и дефис (2-50 символов)</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="street" class="form-label">Улица *</label>
+                    <input type="text" class="form-control" id="street" name="street" 
+                           required minlength="2" maxlength="100">
+                    <div class="invalid-feedback">Название улицы может содержать только буквы (русские или латинские), цифры, пробелы и дефис (2-100 символов)</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="house" class="form-label">Дом *</label>
+                        <input type="text" class="form-control" id="house" name="house" 
+                               required maxlength="10">
+                        <div class="invalid-feedback">Номер дома может содержать только цифры, буквы, слэш и дефис</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="apartment" class="form-label">Квартира</label>
+                        <input type="text" class="form-control" id="apartment" name="apartment" 
+                               pattern="^[0-9]+$" maxlength="10">
+                        <div class="invalid-feedback">Номер квартиры может содержать только цифры</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Телефон *</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" 
+                           required pattern="^\+7[0-9]{10}$"
+                           placeholder="+7XXXXXXXXXX">
+                    <div class="invalid-feedback">Телефон должен быть в формате +7XXXXXXXXXX</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="price" class="form-label">Цена *</label>
+                    <input type="number" class="form-control" id="price" name="price" 
+                           required min="0" max="999999.99" step="0.01">
+                    <div class="invalid-feedback">Цена должна быть положительным числом не более 1,000,000</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Создать заказ</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+function isCyrillicLatin(str) {
+    return /^[А-Яа-яЁёA-Za-z\s-]+$/.test(str);
+}
+function isCyrillicLatinNum(str) {
+    return /^[А-Яа-яЁёA-Za-z0-9\s-]+$/.test(str);
+}
+function isHouseValid(str) {
+    return /^(?=.*[0-9])[А-Яа-яЁёA-Za-z0-9/-]{1,10}$/.test(str);
+}
+function validateForm() {
+    const form = document.getElementById('orderForm');
+    const inputs = form.querySelectorAll('input, select');
+    let isValid = true;
+
+    inputs.forEach(input => {
+        input.classList.remove('is-invalid');
+        if (input.hasAttribute('required') && !input.value) {
+            input.classList.add('is-invalid');
+            isValid = false;
+            return;
+        }
+        // Специальная проверка для типа доставки
+        if (input.id === 'delivery_type') {
+            if (!['standard', 'express'].includes(input.value)) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        // JS-валидация для кириллических полей
+        if (input.id === 'client_name') {
+            if (!isCyrillicLatin(input.value) || input.value.length < 2 || input.value.length > 50) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        if (input.id === 'city') {
+            if (!isCyrillicLatin(input.value) || input.value.length < 2 || input.value.length > 50) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        if (input.id === 'street') {
+            if (!isCyrillicLatinNum(input.value) || input.value.length < 2 || input.value.length > 100) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        if (input.id === 'house') {
+            if (!isHouseValid(input.value) || input.value.length > 10) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        // Проверяем паттерны (оставляем только для телефона и квартиры)
+        if (input.hasAttribute('pattern') && input.value) {
+            const pattern = new RegExp(input.getAttribute('pattern'));
+            if (!pattern.test(input.value)) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        // Проверяем длину
+        if (input.hasAttribute('minlength') && input.value.length < input.getAttribute('minlength')) {
+            input.classList.add('is-invalid');
+            isValid = false;
+            return;
+        }
+        if (input.hasAttribute('maxlength') && input.value.length > input.getAttribute('maxlength')) {
+            input.classList.add('is-invalid');
+            isValid = false;
+            return;
+        }
+        // Проверяем цену
+        if (input.id === 'price') {
+            const price = parseFloat(input.value);
+            if (isNaN(price) || price <= 0 || price >= 1000000) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+        }
+        // Дополнительная проверка телефона перед отправкой
+        if (input.id === 'phone') {
+            const cleanPhone = input.value.replace(/\D/g, '');
+            if (cleanPhone.length !== 11) {
+                input.classList.add('is-invalid');
+                isValid = false;
+                return;
+            }
+            input.value = '+' + cleanPhone;
+        }
+    });
+    return isValid;
+}
+
+// Маска для телефона
+document.getElementById('phone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    // Ограничиваем длину до 11 цифр
+    if (value.length > 11) {
+        value = value.substring(0, 11);
+    }
+    
+    // Добавляем 7, если первая цифра не 7
+    if (value.length > 0) {
+        if (value[0] !== '7') {
+            value = '7' + value.substring(value.length > 1 ? 1 : 0);
+        }
+    }
+
+    // Форматируем номер
+    let formattedValue = '';
+    if (value.length > 0) {
+        formattedValue = '+' + value;
+    }
+
+    e.target.value = formattedValue;
+});
+
+// Добавляем обработчик фокуса для телефона
+document.getElementById('phone').addEventListener('focus', function(e) {
+    if (!e.target.value) {
+        e.target.value = '+7';
+    }
+});
+
+// Добавляем обработчик потери фокуса для телефона
+document.getElementById('phone').addEventListener('blur', function(e) {
+    if (e.target.value === '+7') {
+        e.target.value = '';
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock %} 
